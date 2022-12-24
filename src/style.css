@@ -1,0 +1,131 @@
+
+*{
+    margin: 0 ;
+    padding: 0;
+}
+.container-home{
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+.div-content{
+    margin: 20px;
+    display: flex;
+    justify-content: space-around;
+
+
+}
+
+.div-table{
+    display: flex;
+    justify-content: center;
+
+}
+.table {
+    /* border-collapse: collapse; */
+    width: 64%;
+  }
+  
+  #head-color{
+    background-color: rgb(236, 243, 236);
+
+  }
+  th, td {
+    padding: 8px;
+    text-align: left;
+    border-bottom: 1px solid #ddd;
+  }
+
+ button{
+    width: 90px;
+    height: 30px;
+    background-color: rgb(218, 231, 218);
+    border: none;
+    border-radius: 7px;    
+    cursor: pointer;
+ }
+ .modalBackground{
+  width: 100vw;
+  height: 100vh;
+  position: fixed;
+  background-color: rgb(00, 00, 00,0.4);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  top:0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+
+ }
+ .container-modal{
+  width: 300px;
+  height: auto;
+  border-radius: 5px;
+  background-color: white;
+  padding: 20px;
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+
+ }
+
+ input, select{
+  padding: 12px 20px;
+  margin: 8px 0;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  box-sizing: border-box;
+  height: 20px;
+}
+
+
+.genderr{
+  display: flex;
+  flex-direction: row;
+}
+
+label{
+  font-size: 14px;
+}
+
+.titHead{
+  padding-bottom: 10px;
+}
+.but{
+  margin-top: 6px;
+}
+.link{
+  text-decoration: none;
+  color: black;
+}
+.single{
+  border: 1px solid rgb(59, 59, 59,0.3);
+  border-radius: 4px;
+  width: 350px;
+  height: auto;
+  border-radius: 5px;
+  padding: 20px;
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+}
+
+.c-single{
+  display: flex;
+  justify-content: center;
+  margin-top: 35px;
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+.but-1{
+  margin-top: 10px;
+  display: flex;
+  justify-content: space-between;
+}
+Input {
+  height: 25px;
+}
+.but-2{
+  margin: 0 7px 0 7px;
+}
+
