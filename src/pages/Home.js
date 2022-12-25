@@ -24,7 +24,7 @@ export const Home = () => {
   const [changeValue, setChange] = useState();
   const [load, setLoad] = useState(false);
 
-  const [page, setPage] = useState(1);
+  const [page, setPage] = useState(0);
 
   const dateFormat = "YYYY/MM/DD";
 
@@ -46,7 +46,7 @@ export const Home = () => {
     // ...
   }
   useEffect(() => {
-    fetchData(1);
+    fetchData(0);
   }, [isModalOpen]);
 
   const handleCancel = () => {
@@ -139,12 +139,14 @@ export const Home = () => {
           className="table"
           dataSource={dataSource}
           columns={columns}
+          defaultCurrent={6}
           loading={load}
-          defaultCurrent={0}
           pagination={{
             pageSize: 6,
             total: page,
             onChange: (page) => {
+              // if (page == 1) fetchData(0);
+              // else fetchData(page - 1);
               fetchData(page - 1);
             },
           }}
