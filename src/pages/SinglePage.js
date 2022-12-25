@@ -1,72 +1,105 @@
 import React, { useState, useEffect } from "react";
-import { Button, Modal, Checkbox, Form, Input, DatePicker, Select } from "antd";
+import {
+  Button,
+  Modal,
+  Checkbox,
+  Form,
+  Input,
+  DatePicker,
+  Select,
+  Space,
+  Skeleton,
+} from "antd";
 import { useLocation, useNavigate } from "react-router-dom";
 import axios from "axios";
 import moment from "moment";
 
 const SinglePage = () => {
-  const [posts, setPosts] = useState();
+  const [posts, setPosts] = useState({});
+  const [changeValue, setChange] = useState();
   const [form] = Form.useForm();
-  const onFinish = (values) => {
-    console.log("Success:", values);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const dateFormat = "YYYY/MM/DD";
+  const [loading, setLoading] = useState(false);
+  const id = useLocation().pathname.slice(1);
+  const navigate = useNavigate();
+
+  const onFinish = async (values) => {
+    console.log("chackValue:", values);
+    try {
+      await axios.put(`http://prod.example.fafu.com.vn/employee/${id}`, {
+        ...values,
+      });
+    } catch (err) {
+      console.log(err);
+    }
+    navigate("/");
   };
+
   const onFinishFailed = (errorInfo) => {
     console.log("Failed:", errorInfo);
   };
 
-  const id = useLocation().pathname.slice(1);
+  const showModal = () => {
+    setIsModalOpen(true);
+  };
+
+  const handleOk = async () => {
+    try {
+      navigate("/");
+      await axios.delete(`http://prod.example.fafu.com.vn/employee/${id}`);
+      //console.log(res);
+    } catch (error) {
+      console.log(error);
+    }
+    // setIsModalOpen(false);
+  };
+
+  const handleCancel = () => {
+    setIsModalOpen(false);
+  };
 
   useEffect(() => {
     async function fetchData() {
+      setLoading(true);
       // You can await here
       try {
         const res = await axios.get(
           `http://prod.example.fafu.com.vn/employee/${id}`
         );
-        setPosts(res.data);
+        if (res?.data) setPosts(res?.data);
         // console.log(res.data);
       } catch (error) {
         console.log(error);
+      } finally {
+        setLoading(false);
       }
 
       // ...
     }
     fetchData();
-  }, [setPosts]);
+  }, []);
 
-  // const dataSource = [];
-  // posts &&
-  // posts.data.map((post) =>
-  //   dataSource.push({
-  //     key: post.id,
-  //     username: post.username,
-  //     fullname: `${post.firstname} ${post.lastname}`,
-  //     email: post.email,
-  //     phone: post.phone,
-  //   })
-  // );
-
-  //
-
-  console.log(typeof posts);
-
+  const handleClose = () => {
+    navigate("/");
+  };
+  if (loading) return <Skeleton active />;
   return (
     <div className="c-single">
       <div className="single">
         <Form
-          name="basic"
+          form={form}
+          name="control-hooks"
+          initialValues={posts}
           labelCol={{
             span: 8,
           }}
           wrapperCol={{
             span: 16,
           }}
-          initialValues={{
-            remember: true,
-          }}
           onFinish={onFinish}
           onFinishFailed={onFinishFailed}
-          autoComplete="off"
+          // autoComplete="off"
         >
           <Form.Item
             label="Username"
@@ -128,7 +161,13 @@ const SinglePage = () => {
               },
             ]}
           >
-            <Input />
+            <Input
+              onKeyPress={(event) => {
+                if (!/[0-9]/.test(event.key)) {
+                  event.preventDefault();
+                }
+              }}
+            />
           </Form.Item>
           <Form.Item label="Address" name="address">
             <Input />
@@ -137,6 +176,7 @@ const SinglePage = () => {
           <Form.Item
             label="Birthday"
             name="birthday"
+            // format={dateFormat}
             rules={[
               {
                 required: true,
@@ -144,11 +184,18 @@ const SinglePage = () => {
               },
             ]}
           >
-            <DatePicker
-              style={{
-                height: 25,
-              }}
-            />
+            {/* <Input /> */}
+
+            <Space direction="vertical" size={12}>
+              <DatePicker
+                name="birthday"
+                defaultValue={moment.unix(posts?.birthday / 1000, dateFormat)}
+                format={dateFormat}
+                style={{
+                  height: 25,
+                }}
+              />
+            </Space>
           </Form.Item>
 
           <Form.Item
@@ -157,13 +204,14 @@ const SinglePage = () => {
             rules={[
               {
                 required: true,
-                message: "Please input your birthday!",
+                message: "Please input your gender!",
               },
             ]}
           >
             <Select
               id="gender"
               name="gender"
+              defaultValue={posts && posts.gender}
               style={{
                 height: 25,
               }}
@@ -186,12 +234,25 @@ const SinglePage = () => {
             }}
           >
             <div className="but-1">
-              <Button type="primary" htmlType="button">
+              <Button type="primary" htmlType="button" onClick={handleClose}>
                 Close
               </Button>
-              <Button className="but-2" type="primary" htmlType="button">
+              <Button
+                className="but-2"
+                type="primary"
+                htmlType="button"
+                onClick={showModal}
+              >
                 Delete
               </Button>
+              <Modal
+                title="Delete"
+                open={isModalOpen}
+                onOk={handleOk}
+                onCancel={handleCancel}
+              >
+                <p>Xóa phần tử?</p>
+              </Modal>
               <Button type="primary" htmlType="submit">
                 Update
               </Button>

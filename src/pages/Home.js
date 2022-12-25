@@ -22,24 +22,31 @@ export const Home = () => {
   const navigate = useNavigate();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [changeValue, setChange] = useState();
+  const [load, setLoad] = useState(false);
+
+  const [page, setPage] = useState(1);
+
   const dateFormat = "YYYY/MM/DD";
 
-  useEffect(() => {
-    async function fetchData() {
-      // You can await here
-      try {
-        const res = await axios.get(
-          `http://prod.example.fafu.com.vn/employee?page=0&size=6`
-        );
-        setPosts(res.data);
-        //console.log(res.data);
-      } catch (error) {
-        console.log(error);
-      }
-
-      // ...
+  async function fetchData(page) {
+    setLoad(true);
+    // You can await here
+    try {
+      const res = await axios.get(
+        `http://prod.example.fafu.com.vn/employee?page=${page}&size=6`
+      );
+      setPosts(res.data);
+      setPage(res.data.total_count);
+      setLoad(false);
+      // console.log(page);
+    } catch (error) {
+      console.log(error);
     }
-    fetchData();
+
+    // ...
+  }
+  useEffect(() => {
+    fetchData(1);
   }, [isModalOpen]);
 
   const handleCancel = () => {
@@ -107,8 +114,14 @@ export const Home = () => {
   return (
     <div className="container-home">
       <div className="div-content">
-        <h2>Hệ thống quản lý sinh viên</h2>
-        <Button onClick={() => setIsModalOpen(true)}>Tạo mới</Button>
+        <h2
+          style={{
+            color: "gray",
+          }}
+        >
+          Student Manage
+        </h2>
+        <Button onClick={() => setIsModalOpen(true)}>Insert</Button>
       </div>
 
       <div className="div-table">
@@ -118,6 +131,7 @@ export const Home = () => {
             return {
               onClick: (event) => {
                 // console.log(record.key);
+
                 navigate(`/${record.key}`);
               }, // click row
             };
@@ -125,6 +139,15 @@ export const Home = () => {
           className="table"
           dataSource={dataSource}
           columns={columns}
+          loading={load}
+          defaultCurrent={0}
+          pagination={{
+            pageSize: 6,
+            total: page,
+            onChange: (page) => {
+              fetchData(page - 1);
+            },
+          }}
         />
         {/* <table>
           <thead>
@@ -152,7 +175,6 @@ export const Home = () => {
       </div>
       <div>
         <Modal
-          className="poi"
           open={isModalOpen}
           title="Insert"
           destroyOnClose={true}
