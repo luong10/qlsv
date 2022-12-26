@@ -12,6 +12,10 @@ const router = createBrowserRouter([
     path: "/:id",
     element: <SinglePage />,
   },
+  {
+    path: "/home/:pageNumber",
+    element: <Home />,
+  },
 ]);
 function App() {
   return <RouterProvider router={router} />;

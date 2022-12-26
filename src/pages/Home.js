@@ -3,7 +3,7 @@ import axios from "axios";
 import moment from "moment";
 import "../style.css";
 //import { Modall } from "../component/Modall";
-import { Link, useLocation, useNavigate } from "react-router-dom";
+import { Link, useLocation, useNavigate, useParams } from "react-router-dom";
 import {
   Button,
   Modal,
@@ -23,17 +23,18 @@ export const Home = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [changeValue, setChange] = useState();
   const [load, setLoad] = useState(false);
-
   const [page, setPage] = useState(0);
+  // const [pageF5, setPageF5] = useState(0);
 
   const dateFormat = "YYYY/MM/DD";
-
+  const pageF5 = Number(useParams().pageNumber);
+  // console.log(pageF5);
   async function fetchData(page) {
     setLoad(true);
     // You can await here
     try {
       const res = await axios.get(
-        `http://prod.example.fafu.com.vn/employee?page=${page}&size=6`
+        `http://prod.example.fafu.com.vn/employee?page=${page - 1}&size=6`
       );
       setPosts(res.data);
       setPage(res.data.total_count);
@@ -46,7 +47,7 @@ export const Home = () => {
     // ...
   }
   useEffect(() => {
-    fetchData(0);
+    pageF5 ? fetchData(pageF5) : fetchData(1);
   }, [isModalOpen]);
 
   const handleCancel = () => {
@@ -139,16 +140,16 @@ export const Home = () => {
           className="table"
           dataSource={dataSource}
           columns={columns}
-          defaultCurrent={6}
+          // defaultCurrent={6}
           loading={load}
           pagination={{
             pageSize: 6,
             total: page,
-            onChange: (page) => {
-              // if (page == 1) fetchData(0);
-              // else fetchData(page - 1);
-              fetchData(page - 1);
-            },
+            current: pageF5 ? pageF5 : 1,
+          }}
+          onChange={(page) => {
+            fetchData(page.current);
+            navigate(`/home/${page.current}`);
           }}
         />
         {/* <table>
